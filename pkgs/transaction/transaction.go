@@ -101,3 +101,20 @@ func (t *Transaction) MarshallJSON() ([]byte, error) {
 		Value:     t.value,
 	})
 }
+
+func (t *Transaction) UnmarshalJSON(data []byte) error {
+
+	v := &struct {
+		Sender    *string  `json:"sender_blockchain_address"`
+		Recipient *string  `json:"recipient_blockchain_address"`
+		Value     *float32 `json:"value"`
+	}{
+		Sender:    &t.senderBlockchainAddress,
+		Recipient: &t.recipientBlockchainAddress,
+		Value:     &t.value,
+	}
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	return nil
+}

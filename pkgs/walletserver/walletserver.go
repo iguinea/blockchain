@@ -2,14 +2,13 @@ package walletserver
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"path"
 	"strconv"
-	"text/template"
 
 	"github.com/iguinea/cryptodemo/pkgs/blockchain"
 	"github.com/iguinea/cryptodemo/pkgs/transaction"
@@ -17,20 +16,28 @@ import (
 	"github.com/iguinea/cryptodemo/pkgs/wallet"
 )
 
-const tempDir = "pkgs/walletserver/templates/"
+//go:embed templates/index.html
+var indexPage []byte
+
+//go:embed templates/*
+var assets embed.FS
+
+//const tempDir = "pkgs/walletserver/templates/"
 
 type WalletServer struct {
-	port    uint16
-	gateway string
+	port    uint16 // walletserver serving on this port
+	gateway string // blockchainserver to connect
 }
 
 func NewWalletServer(port uint, gateway string) *WalletServer {
+	_ = assets
 	return &WalletServer{port: uint16(port), gateway: gateway}
 }
 
 func (ws *WalletServer) Port() uint16    { return ws.port }
 func (ws *WalletServer) Gateway() string { return ws.gateway }
-func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
+
+/*func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
 		t, err := template.ParseFiles(path.Join(tempDir + "index.html"))
@@ -42,7 +49,7 @@ func (ws *WalletServer) Index(w http.ResponseWriter, req *http.Request) {
 	default:
 		log.Print("ERROR: invalid HTTP method")
 	}
-}
+}*/
 
 func (ws *WalletServer) Wallet(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
@@ -127,7 +134,7 @@ func (ws *WalletServer) WalletAmount(w http.ResponseWriter, req *http.Request) {
 		blockchainAdress := req.URL.Query().Get("blockchain_address")
 		log.Printf("blockchainAdress: %+v", blockchainAdress)
 		endpoint := fmt.Sprintf("%s/amount", ws.gateway)
-		//log.Printf("endpoint: %+v", endpoint)
+		log.Printf("endpoint: %+v", endpoint)
 
 		client := &http.Client{}
 		bcsReq, _ := http.NewRequest("GET", endpoint, nil)
@@ -175,9 +182,16 @@ func (ws *WalletServer) WalletAmount(w http.ResponseWriter, req *http.Request) {
 }
 
 func (ws *WalletServer) Run() {
-	http.HandleFunc("/", ws.Index)
+
+	//http.HandleFunc("/", ws.Index)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Write(indexPage)
+	})
+
 	http.HandleFunc("/wallet", ws.Wallet)
 	http.HandleFunc("/wallet/amount", ws.WalletAmount)
 	http.HandleFunc("/transaction", ws.CreateTransaction)
+
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.port)), nil))
 }

@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"regexp"
@@ -14,7 +13,7 @@ func IsFoundHost(host string, port uint) bool {
 
 	_, err := net.DialTimeout("tcp", target, 1*time.Second)
 	if err != nil {
-		log.Printf("%s %v\n", target, err)
+		//log.Printf("%s %v\n", target, err)
 		return false
 	}
 
@@ -42,7 +41,7 @@ func FindNeighbors(myHost string, myPort uint16, startIp uint8, endIp uint8, sta
 			guessTarget := fmt.Sprintf("%s:%d", guessHost, port)
 			//fmt.Printf("guessHost: %s   --- guessTarget: %s\n", guessHost, guessTarget)
 			if guessTarget != address && IsFoundHost(guessHost, uint(port)) {
-				fmt.Printf("found host: %s\n", guessTarget)
+				//fmt.Printf("found host: %s\n", guessTarget)
 				neighbors = append(neighbors, guessTarget)
 			}
 		}
@@ -55,5 +54,9 @@ func GetHost() string {
 	if err != nil {
 		return "127.0.0.1"
 	}
-	address, err := net.Lo
+	address, err := net.LookupHost(hostname)
+	if err != nil {
+		return "127.0.0.1"
+	}
+	return address[0]
 }

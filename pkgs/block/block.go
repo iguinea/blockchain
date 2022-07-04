@@ -2,6 +2,7 @@ package block
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -29,6 +30,17 @@ func AssembleBlock(timestamp int64, nonce int, previousHash [32]byte, transactio
 	b.transactions = transactions
 	return b
 }
+
+func (b *Block) PreviousHash() [32]byte {
+	return b.previousHash
+}
+func (b *Block) Nonce() int {
+	return b.nonce
+}
+func (b *Block) Transactions() []*transaction.Transaction {
+	return b.transactions
+}
+
 func (b *Block) Print() {
 	old_preffix := log.Prefix()
 	log.SetPrefix(fmt.Sprintf("%.16s ", "Block               "))
@@ -59,6 +71,28 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 		PreviousHash: fmt.Sprintf("%x", b.previousHash),
 		Transactions: b.transactions,
 	})
+}
+
+func (b *Block) UnmarshalJSON(data []byte) error {
+	var previousHash string
+	v := struct {
+		Timestamp    *int64                      `json:"timestamp"`
+		Nonce        *int                        `json:"nonce"`
+		PreviousHash *string                     `json:"previous_hash"`
+		Transactions *[]*transaction.Transaction `json:"transactions"`
+	}{
+		Timestamp:    &b.timestamp,
+		Nonce:        &b.nonce,
+		PreviousHash: &previousHash,
+		Transactions: &b.transactions,
+	}
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	ph, _ := hex.DecodeString(*v.PreviousHash)
+	copy(b.previousHash[:], ph[:32])
+
+	return nil
 }
 func (b *Block) GetTransactions() []*transaction.Transaction {
 	return b.transactions

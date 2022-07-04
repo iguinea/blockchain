@@ -1,5 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/iguinea/Documents/blockchain'
+make: Entering directory '/home/iguinea/Documents/cryptodemo'
 go run cmd/blockchain_server/main.go
-make: Leaving directory '/home/iguinea/Documents/blockchain'
+make: Leaving directory '/home/iguinea/Documents/cryptodemo'
  

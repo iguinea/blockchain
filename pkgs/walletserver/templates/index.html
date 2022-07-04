@@ -43,18 +43,18 @@
                         data: JSON.stringify(transaction_data),
                         success: function(response){
                             console.info(response);
-                            //if (response.message === 'fail') {
-                            //    alert('failed')
-                            //    return
-                            //}
-                            alert('Send success');
+                            if (response.message === 'fail') {
+                                alert('failed')
+                            }else{                            
+                                alert('Send success');
+                            }
                         },
                         error: function(response){
                             console.error(response);
                             alert('Send failure');
                         },
                     })
-                })
+                });
 
                 function reload_amount(){
                     let data = {'blockchain_address': $('#blockchain_address').val()}
@@ -88,7 +88,9 @@
         <div>
             <h1>Wallet</h1>
             <div id="wallet_amount">0</div>
-            <button id="reload_wallet">Reload Wallet</button>
+            <!--
+                <button id="reload_wallet">Reload Wallet</button>
+            -->
             <p>Public Key<textarea id="public_key" rows="2" cols="80"></textarea></p>
             <p>Private Key<textarea id="private_key" rows="1" cols="80"></textarea></p>
             <p>Blockchain Address<textarea id="blockchain_address" rows="1" cols="80"></textarea></p>

@@ -16,18 +16,20 @@ func init() {
 }
 
 func main() {
-	//localAddresses()
+	localAddresses()
 	//log.Println(utils.IsFoundHost("172.17.0.1", 5000))
 
-	log.Println(utils.FindNeighbors("172.17.0.4", 5000, 1, 20, 5000, 5001))
+	log.Printf("%v", utils.GetHost())
+	//log.Println(utils.FindNeighbors("172.17.0.4", 5000, 1, 20, 5000, 5001))
 
 }
 
-func localAddresses() {
+func localAddresses() map[string]net.Addr {
+	returnedValues := make(map[string]net.Addr)
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		log.Print(fmt.Errorf("localAddresses: %v\n", err.Error()))
-		return
+		return nil
 	}
 	for _, i := range ifaces {
 		addrs, err := i.Addrs()
@@ -36,7 +38,9 @@ func localAddresses() {
 			continue
 		}
 		for _, a := range addrs {
+			returnedValues[i.Name] = a
 			log.Printf("%v %v\n", i.Name, a)
 		}
 	}
+	return returnedValues
 }

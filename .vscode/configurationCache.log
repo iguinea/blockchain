@@ -1,1 +1,1 @@
-{"buildTargets":["blockchainserver","walletserver"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
+{"buildTargets":["blockchainserver","build","build_blockchainserver","build_docker","build_docker_blockchainserver","build_docker_walletserver","build_walletserver","compile","playground","run_docker_blockchainserver","run_docker_walletserver","walletserver"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
